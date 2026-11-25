@@ -1,7 +1,7 @@
 Projeto Banco de Dados I
 
 Integrantes:
-  Cassiano
+  Cassiano Sampaio Campana - 201900560042
   Eric Yuhki Sato - 202000560067
 
 I.  Natureza e proposta escolhida para o projeto
