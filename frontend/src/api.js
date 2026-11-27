@@ -36,5 +36,58 @@ export const api={
     criarAvaliacao:(avaliacao)=>request("/avaliacoes", {method:"POST", body:JSON.stringify(avaliacao)}),
     adicionarItemAvaliacao:(codigo, item)=>request(`/avaliacoes/${codigo}/itens`, {method:"POST", body:JSON.stringify(item)}),
     removerItemAvaliacao:(codigo, codigoQuestao)=>request(`/avaliacoes/${codigo}/itens/${codigoQuestao}`, {method:"DELETE"}),
-    definirTurmasAvaliacao:(codigo, turmasIds)=>request(`/avaliacoes/${codigo}/turmas`, {method:"PUT", body:JSON.stringify(turmasIds)})
+    definirTurmasAvaliacao:(codigo, turmasIds)=>request(`/avaliacoes/${codigo}/turmas`, {method:"PUT", body:JSON.stringify(turmasIds)}),
+    listarAvaliacoesAluno:(idAluno)=>request(`/realizacoes/aluno/${idAluno}`),
+    carregarProvaAluno:(idAluno, codigoAvaliacao)=>request(`/realizacoes/aluno/${idAluno}/prova/${codigoAvaliacao}`),
+    submeterAvaliacao:(payload)=>request("/realizacoes/submeter", {method:"POST", body:JSON.stringify(payload)}),
+    buscarResultadoAluno:(idAluno, codigoAvaliacao)=>request(`/realizacoes/aluno/${idAluno}/resultado/${codigoAvaliacao}`),
+    listarDissertativas:(apenasPendentes)=>request(`/realizacoes/dissertativas?apenasPendentes=${apenasPendentes}`),
+    corrigirDissertativa:(payload)=>request("/realizacoes/dissertativas/corrigir", {method:"PUT", body:JSON.stringify(payload)}),
+    listarNotasTotais:(codigoAvaliacao)=>request(codigoAvaliacao?`/realizacoes/notas?codigoAvaliacao=${codigoAvaliacao}`:"/realizacoes/notas"),
+    listarAlunosRelatorio:()=>request("/relatorios/alunos"),
+    relatorioAvaliacoes:(params)=>{
+        const qs=new URLSearchParams();
+        if(params.inicio){
+            qs.set("inicio", params.inicio);
+        }
+        if(params.fim){
+            qs.set("fim", params.fim);
+        }
+        if(params.codigoAvaliacao){
+            qs.set("codigoAvaliacao", params.codigoAvaliacao);
+        }
+        if(params.codigoTurma){
+            qs.set("codigoTurma", params.codigoTurma);
+        }
+        if(params.minRespondentes){
+            qs.set("minRespondentes", params.minRespondentes);
+        }
+        return request(`/relatorios/avaliacoes?${qs.toString()}`);
+    },
+    relatorioRankingQuestoes:(limite, termo)=>{
+        const qs=new URLSearchParams();
+        qs.set("limite", limite||10);
+        if(termo){
+            qs.set("termo", termo);
+        }
+        return request(`/relatorios/questoes-ranking?${qs.toString()}`);
+    },
+    relatorioEvolucao:(codigoTurma, idAluno)=>{
+        const qs=new URLSearchParams();
+        if(codigoTurma){
+            qs.set("codigoTurma", codigoTurma);
+        }
+        if(idAluno){
+            qs.set("idAluno", idAluno);
+        }
+        const str=qs.toString();
+        return request(str?`/relatorios/evolucao?${str}`:"/relatorios/evolucao");
+    },
+    relatorioEvolucaoAluno:(idAluno)=>request(`/relatorios/evolucao/${idAluno}`),
+    relatorioPendencias:(turmasIds)=>{
+        const qs=new URLSearchParams();
+        (turmasIds||[]).forEach((id)=>qs.append("turmas", id));
+        const str=qs.toString();
+        return request(str?`/relatorios/pendencias?${str}`:"/relatorios/pendencias");
+    }
 };

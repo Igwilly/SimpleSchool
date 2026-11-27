@@ -1,18 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {api} from "../api.js";
 
-export default function TurmasPage(){
+const MIN_ANO=2000;
+const MAX_ANO=2100;
+
+export default function TurmasPage({notificar}){
     const [turmas, setTurmas]=useState([]);
     const [nome, setNome]=useState("");
-    const [anoLetivo, setAnoLetivo]=useState(2026);
-    const [erro, setErro]=useState("");
+    const [anoLetivo, setAnoLetivo]=useState("2026");
     const [sucesso, setSucesso]=useState("");
 
     async function carregar(){
         try{
             setTurmas(await api.listarTurmas());
         }catch(err){
-            setErro(err.message);
+            notificar("Erro ao carregar turmas", err.message);
         }
     }
 
@@ -20,34 +22,67 @@ export default function TurmasPage(){
         carregar();
     }, []);
 
+    function alterarNome(valor){
+        if(valor.length>50){
+            setNome(valor.slice(0, 50));
+            notificar("Limite atingido", "O nome da turma aceita no maximo 50 caracteres.");
+            return;
+        }
+        setNome(valor);
+    }
+
+    function alterarAno(valor){
+        if(valor===""){
+            setAnoLetivo("");
+            return;
+        }
+        const n=Number(valor);
+        if(isNaN(n)){
+            return;
+        }
+        if(n>MAX_ANO){
+            setAnoLetivo(String(MAX_ANO));
+            notificar("Ano limitado", `O ano letivo maximo e ${MAX_ANO}. Ajustado automaticamente.`);
+            return;
+        }
+        setAnoLetivo(valor);
+    }
+
+    function validarAnoAoSair(){
+        const n=Number(anoLetivo);
+        if(anoLetivo===""||isNaN(n)||n<MIN_ANO){
+            setAnoLetivo(String(MIN_ANO));
+            notificar("Ano limitado", `O ano letivo minimo permitido pelo banco e ${MIN_ANO}.`);
+        }
+    }
+
     async function salvar(e){
         e.preventDefault();
-        setErro("");
         setSucesso("");
+        const anoNum=Number(anoLetivo);
+        const anoFinal=(isNaN(anoNum)||anoNum<MIN_ANO)?MIN_ANO:(anoNum>MAX_ANO?MAX_ANO:anoNum);
         try{
-            const criada=await api.criarTurma({codigo:0, nome, anoLetivo:Number(anoLetivo)});
+            const criada=await api.criarTurma({codigo:0, nome, anoLetivo:anoFinal});
             setSucesso(`Turma #${criada.codigo} cadastrada.`);
             setNome("");
             await carregar();
         }catch(err){
-            setErro(err.message);
+            notificar("Erro ao salvar turma", err.message);
         }
     }
 
     async function excluir(codigo){
-        setErro("");
         setSucesso("");
         try{
             await api.excluirTurma(codigo);
             await carregar();
         }catch(err){
-            setErro(err.message);
+            notificar("Erro ao excluir turma", err.message);
         }
     }
 
     return (
         <div>
-            {erro&&<p><strong>Erro:</strong> {erro}</p>}
             {sucesso&&<p><strong>Ok:</strong> {sucesso}</p>}
 
             <fieldset>
@@ -55,22 +90,25 @@ export default function TurmasPage(){
                 <form onSubmit={salvar}>
                     <p>
                         <label>
-                            Nome:{" "}
+                            Nome (max 50 caracteres):{" "}
                             <input
                                 type="text"
-                                maxLength={50}
+                                placeholder="Ex.: ES-B (max 50)"
                                 value={nome}
-                                onChange={(e)=>setNome(e.target.value)}
+                                onChange={(e)=>alterarNome(e.target.value)}
                                 required
                             />
                         </label>{" "}
                         <label>
-                            Ano letivo:{" "}
+                            Ano letivo (min {MIN_ANO}, max {MAX_ANO}):{" "}
                             <input
                                 type="number"
-                                min={2000}
+                                min={MIN_ANO}
+                                max={MAX_ANO}
+                                placeholder={`${MIN_ANO} a ${MAX_ANO}`}
                                 value={anoLetivo}
-                                onChange={(e)=>setAnoLetivo(e.target.value)}
+                                onChange={(e)=>alterarAno(e.target.value)}
+                                onBlur={validarAnoAoSair}
                                 required
                             />
                         </label>{" "}

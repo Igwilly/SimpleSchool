@@ -1,21 +1,28 @@
 import React, {useState} from "react";
 import {api} from "../api.js";
 
-export default function LoginPage({onLogin}){
+export default function LoginPage({onLogin, notificar}){
     const [email, setEmail]=useState("");
     const [senha, setSenha]=useState("");
-    const [erro, setErro]=useState("");
     const [carregando, setCarregando]=useState(false);
+
+    function alterarEmail(valor){
+        if(valor.length>50){
+            setEmail(valor.slice(0, 50));
+            notificar("Limite atingido", "O email suporta no maximo 50 caracteres.");
+            return;
+        }
+        setEmail(valor);
+    }
 
     async function submeter(e){
         e.preventDefault();
-        setErro("");
         setCarregando(true);
         try{
             const usuario=await api.login({email, senha});
             onLogin(usuario);
         }catch(err){
-            setErro(err.message);
+            notificar("Erro no login", err.message);
         }finally{
             setCarregando(false);
         }
@@ -26,16 +33,16 @@ export default function LoginPage({onLogin}){
             <h1>Sistema de avaliacoes</h1>
             <fieldset>
                 <legend>Login</legend>
-                {erro&&<p><strong>Erro:</strong> {erro}</p>}
                 <form onSubmit={submeter}>
                     <p>
                         <label>
-                            Email:<br />
+                            Email (max 50 caracteres):<br />
                             <input
                                 type="email"
                                 size={35}
+                                placeholder="usuario@gov.br (max 50)"
                                 value={email}
-                                onChange={(e)=>setEmail(e.target.value)}
+                                onChange={(e)=>alterarEmail(e.target.value)}
                                 required
                             />
                         </label>
@@ -46,6 +53,7 @@ export default function LoginPage({onLogin}){
                             <input
                                 type="password"
                                 size={35}
+                                placeholder="Digite sua senha"
                                 value={senha}
                                 onChange={(e)=>setSenha(e.target.value)}
                                 required
