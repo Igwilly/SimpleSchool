@@ -1,0 +1,16 @@
+target/
+**/target/
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.idea/
+**/.idea/
+*.iml
+.vscode/
+**/.vscode/
+*.log
+*.pdf
+.env
+.DS_Store
+Thumbs.db
