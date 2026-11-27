@@ -70,6 +70,9 @@ public class AvaliacaoService{
     }
 
     public void adicionarItem(int codigoAvaliacao, ItemAvaliacaoDTO item){
+        if(avaliacaoDAO.possuiRespostas(codigoAvaliacao)){
+            throw new IllegalArgumentException("Nao e permitido alterar as questoes de uma avaliacao que ja possui respostas de alunos.");
+        }
         if(item.getValor()==null||item.getValor().compareTo(BigDecimal.ZERO)<0){
             throw new IllegalArgumentException("O valor da questao nao pode ser menor que 0.");
         }
@@ -81,6 +84,9 @@ public class AvaliacaoService{
     }
 
     public int removerItem(int codigoAvaliacao, int codigoQuestao){
+        if(avaliacaoDAO.possuiRespostas(codigoAvaliacao)){
+            throw new IllegalArgumentException("Nao e permitido remover questoes de uma avaliacao que ja possui respostas de alunos.");
+        }
         return avaliacaoDAO.removerItem(codigoAvaliacao, codigoQuestao);
     }
 

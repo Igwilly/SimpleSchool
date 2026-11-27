@@ -98,6 +98,14 @@ public class AvaliacaoDAO{
         return soma!=null?soma:BigDecimal.ZERO;
     }
 
+    public boolean possuiRespostas(int codigoAvaliacao){
+        Integer qtd=jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM Soluciona_avaliacao WHERE codigo_avaliacao=?",
+                Integer.class, codigoAvaliacao
+        );
+        return qtd!=null&&qtd>0;
+    }
+
     @Transactional
     public void definirTurmas(int codigoAvaliacao, List<Integer>turmasIds){
         jdbcTemplate.update("DELETE FROM Destinada WHERE codigo_avaliacao=?", codigoAvaliacao);

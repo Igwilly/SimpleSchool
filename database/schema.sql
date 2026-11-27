@@ -78,7 +78,8 @@ CREATE TABLE Resposta(
 	codigo_avaliacao INT NOT NULL REFERENCES Avaliacao(codigo),
 	codigo_questao INT NOT NULL REFERENCES Questao(codigo),
 	nota NUMERIC(5, 2) NOT NULL CHECK(nota>=0 AND nota<=100),
-	PRIMARY KEY(ID_aluno,codigo_avaliacao, codigo_questao)
+	PRIMARY KEY(ID_aluno,codigo_avaliacao, codigo_questao),
+	FOREIGN KEY(codigo_avaliacao, codigo_questao) REFERENCES Item_avaliacao(codigo_avaliacao, codigo_questao)
 );
 
 CREATE TABLE Resposta_dissertativa(
