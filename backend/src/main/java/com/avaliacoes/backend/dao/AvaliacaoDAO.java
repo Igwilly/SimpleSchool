@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +31,14 @@ public class AvaliacaoDAO{
             dto.setCodigo(proximo!=null?proximo:1);
         }
 
+        LocalDate dt=LocalDate.parse(dto.getData());
+        LocalTime hIni=LocalTime.parse(dto.getHoraInicio().length()==5?dto.getHoraInicio()+":00":dto.getHoraInicio());
+        LocalTime hFim=LocalTime.parse(dto.getHoraFim().length()==5?dto.getHoraFim()+":00":dto.getHoraFim());
+
         jdbcTemplate.update(
-                "INSERT INTO Avaliacao (codigo, titulo, descricao, materia) VALUES (?, ?, ?, ?)",
-                dto.getCodigo(), dto.getTitulo(), dto.getDescricao(), dto.getMateria()
+                "INSERT INTO Avaliacao (codigo, titulo, descricao, materia, data, hora_inicio, hora_fim) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                dto.getCodigo(), dto.getTitulo(), dto.getDescricao(), dto.getMateria(),
+                Date.valueOf(dt), Time.valueOf(hIni), Time.valueOf(hFim)
         );
 
         if(dto.getIdProfessor()>0){
@@ -81,6 +90,14 @@ public class AvaliacaoDAO{
         );
     }
 
+    public BigDecimal somarValoresExcetoQuestao(int codigoAvaliacao, int codigoQuestao){
+        BigDecimal soma=jdbcTemplate.queryForObject(
+                "SELECT COALESCE(SUM(valor), 0) FROM Item_avaliacao WHERE codigo_avaliacao=? AND codigo_questao<>?",
+                BigDecimal.class, codigoAvaliacao, codigoQuestao
+        );
+        return soma!=null?soma:BigDecimal.ZERO;
+    }
+
     @Transactional
     public void definirTurmas(int codigoAvaliacao, List<Integer>turmasIds){
         jdbcTemplate.update("DELETE FROM Destinada WHERE codigo_avaliacao=?", codigoAvaliacao);
@@ -121,14 +138,14 @@ public class AvaliacaoDAO{
             where="WHERE EXISTS (SELECT 1 FROM Destinada d2 WHERE d2.codigo_avaliacao=av.codigo AND d2.codigo_turma=?) ";
         }
         String sql="""
-                SELECT av.codigo, av.titulo, av.descricao, av.materia,
+                SELECT av.codigo, av.titulo, av.descricao, av.materia, av.data, av.hora_inicio, av.hora_fim,
                        MIN(p.ID) AS id_professor,
                        STRING_AGG(p.nome, ', ' ORDER BY p.nome) AS nome_professor
                 FROM Avaliacao av
                 LEFT JOIN Elabora e ON e.codigo_avaliacao=av.codigo
                 LEFT JOIN Professor p ON p.ID=e.ID
                 """+where+"""
-                GROUP BY av.codigo, av.titulo, av.descricao, av.materia
+                GROUP BY av.codigo, av.titulo, av.descricao, av.materia, av.data, av.hora_inicio, av.hora_fim
                 ORDER BY av.codigo DESC
                 """;
 
@@ -158,6 +175,12 @@ public class AvaliacaoDAO{
         dto.setTitulo(rs.getString("titulo"));
         dto.setDescricao(rs.getString("descricao"));
         dto.setMateria(rs.getString("materia"));
+        Date dt=rs.getDate("data");
+        Time hIni=rs.getTime("hora_inicio");
+        Time hFim=rs.getTime("hora_fim");
+        dto.setData(dt!=null?dt.toString():null);
+        dto.setHoraInicio(hIni!=null?hIni.toString().substring(0, 5):null);
+        dto.setHoraFim(hFim!=null?hFim.toString().substring(0, 5):null);
         dto.setIdProfessor(rs.getInt("id_professor"));
         dto.setNomeProfessor(rs.getString("nome_professor"));
         dto.setValorTotal(BigDecimal.ZERO);

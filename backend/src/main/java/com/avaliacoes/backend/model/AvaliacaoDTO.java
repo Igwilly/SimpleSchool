@@ -9,6 +9,9 @@ public class AvaliacaoDTO{
     private String titulo;
     private String descricao;
     private String materia;
+    private String data;
+    private String horaInicio;
+    private String horaFim;
     private int idProfessor;
     private String nomeProfessor;
     private BigDecimal valorTotal=BigDecimal.ZERO;
@@ -46,6 +49,30 @@ public class AvaliacaoDTO{
 
     public void setMateria(String materia){
         this.materia=materia;
+    }
+
+    public String getData(){
+        return data;
+    }
+
+    public void setData(String data){
+        this.data=data;
+    }
+
+    public String getHoraInicio(){
+        return horaInicio;
+    }
+
+    public void setHoraInicio(String horaInicio){
+        this.horaInicio=horaInicio;
+    }
+
+    public String getHoraFim(){
+        return horaFim;
+    }
+
+    public void setHoraFim(String horaFim){
+        this.horaFim=horaFim;
     }
 
     public int getIdProfessor(){

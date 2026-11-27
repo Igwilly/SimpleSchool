@@ -30,7 +30,9 @@ public class QuestaoDAO{
 
         if("OBJETIVA".equalsIgnoreCase(dto.getTipo())){
             dto.setTipo("OBJETIVA");
-            jdbcTemplate.update("INSERT INTO Questao_objetiva (codigo) VALUES (?)", dto.getCodigo());
+            String img=(dto.getImagem()!=null&&!dto.getImagem().isBlank())?dto.getImagem():null;
+            dto.setImagem(img);
+            jdbcTemplate.update("INSERT INTO Questao_objetiva (codigo, imagem) VALUES (?, ?)", dto.getCodigo(), img);
             for(Alternativa alt:dto.getAlternativas()){
                 String letra=alt.getLetra().trim().toUpperCase();
                 alt.setCodigoQuestao(dto.getCodigo());
@@ -42,6 +44,7 @@ public class QuestaoDAO{
             }
         }else{
             dto.setTipo("DISSERTATIVA");
+            dto.setImagem(null);
             jdbcTemplate.update(
                     "INSERT INTO Questao_dissertativa (codigo, resposta_esperada) VALUES (?, ?)",
                     dto.getCodigo(), dto.getRespostaEsperada()
@@ -52,7 +55,7 @@ public class QuestaoDAO{
 
     public List<QuestaoDTO>listarTodas(){
         String sql="""
-                SELECT q.codigo, q.enunciado,
+                SELECT q.codigo, q.enunciado, qo.imagem,
                        CASE WHEN qo.codigo IS NOT NULL THEN 'OBJETIVA' ELSE 'DISSERTATIVA' END AS tipo,
                        qd.resposta_esperada
                 FROM Questao q
@@ -66,6 +69,7 @@ public class QuestaoDAO{
             QuestaoDTO q=new QuestaoDTO();
             q.setCodigo(rs.getInt("codigo"));
             q.setEnunciado(rs.getString("enunciado"));
+            q.setImagem(rs.getString("imagem"));
             q.setTipo(rs.getString("tipo"));
             q.setRespostaEsperada(rs.getString("resposta_esperada"));
             mapa.put(q.getCodigo(), q);
@@ -91,7 +95,7 @@ public class QuestaoDAO{
 
     public Optional<QuestaoDTO>buscarPorCodigo(int codigo){
         String sql="""
-                SELECT q.codigo, q.enunciado,
+                SELECT q.codigo, q.enunciado, qo.imagem,
                        CASE WHEN qo.codigo IS NOT NULL THEN 'OBJETIVA' ELSE 'DISSERTATIVA' END AS tipo,
                        qd.resposta_esperada
                 FROM Questao q
@@ -103,6 +107,7 @@ public class QuestaoDAO{
             QuestaoDTO q=new QuestaoDTO();
             q.setCodigo(rs.getInt("codigo"));
             q.setEnunciado(rs.getString("enunciado"));
+            q.setImagem(rs.getString("imagem"));
             q.setTipo(rs.getString("tipo"));
             q.setRespostaEsperada(rs.getString("resposta_esperada"));
             return q;

@@ -7,6 +7,7 @@ public class QuestaoDTO{
     private int codigo;
     private String enunciado;
     private String tipo;
+    private String imagem;
     private String respostaEsperada;
     private List<Alternativa>alternativas=new ArrayList<>();
 
@@ -32,6 +33,14 @@ public class QuestaoDTO{
 
     public void setTipo(String tipo){
         this.tipo=tipo;
+    }
+
+    public String getImagem(){
+        return imagem;
+    }
+
+    public void setImagem(String imagem){
+        this.imagem=imagem;
     }
 
     public String getRespostaEsperada(){
