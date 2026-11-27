@@ -269,13 +269,13 @@ INSERT INTO Questao_dissertativa (codigo, resposta_esperada) VALUES
     (34, 'Misturar SQL nas telas acopla apresentacao a persistencia, dificulta manutencao, expoe regras de banco e impede coordenar transacoes atomicas em operacoes que gravam em multiplas tabelas via camada de servico/DAO.'),
     (35, 'Isolamento garante que a execucao concorrente de transacoes nao interfira nos resultados intermediarios umas das outras; o nivel SERIALIZABLE evita leituras sujas, leituras nao repetiveis, leituras fantasmas e anomalias de serializacao.');
 
-INSERT INTO Avaliacao (codigo, titulo, descricao, materia) VALUES
-    (1, 'Prova 1 - Modelagem e DER', 'Primeira prova bimestral cobrindo Modelo Entidade-Relacionamento, cardinalidades, especializacao e mapeamento relacional.', 'Banco de Dados I'),
-    (2, 'Quiz - Normalizacao (1FN a 3FN)', 'Atividade avaliativa rapida sobre dependencias funcionais, decomposicao sem perdas e Formas Normais.', 'Banco de Dados I'),
-    (3, 'Prova 2 - DDL e Consultas SQL', 'Segunda prova bimestral abrangendo restricoes de integridade DDL, juncoes, agregacoes, subconsultas e funcoes de ranking.', 'Banco de Dados I'),
-    (4, 'Simulado Geral de Banco de Dados', 'Simulado integrador preparatorio reutilizando questoes-chave das provas anteriores e casos praticos de aplicacao.', 'Banco de Dados I'),
-    (5, 'Prova 1 - Estruturas de Dados', 'Avaliacao teorico-pratica sobre complexidade assintotica, pilhas, tabelas hash, BST e indices em Arvore B+.', 'Estruturas de Dados'),
-    (6, 'Quiz - Arquitetura em Camadas e JDBC', 'Avaliacao sobre separacao de responsabilidades MVC/DAO, PreparedStatement e controle transacional com JDBC.', 'Engenharia de Software');
+INSERT INTO Avaliacao (codigo, titulo, descricao, materia, data, hora_inicio, hora_fim) VALUES
+    (1, 'Prova 1 - Modelagem e DER', 'Primeira prova bimestral cobrindo Modelo Entidade-Relacionamento, cardinalidades, especializacao e mapeamento relacional.', 'Banco de Dados I', '2026-08-25', '19:15:00', '21:15:00'),
+    (2, 'Quiz - Normalizacao (1FN a 3FN)', 'Atividade avaliativa rapida sobre dependencias funcionais, decomposicao sem perdas e Formas Normais.', 'Banco de Dados I', '2026-09-15', '19:15:00', '21:00:00'),
+    (3, 'Prova 2 - DDL e Consultas SQL', 'Segunda prova bimestral abrangendo restricoes de integridade DDL, juncoes, agregacoes, subconsultas e funcoes de ranking.', 'Banco de Dados I', '2026-10-13', '19:15:00', '21:15:00'),
+    (4, 'Simulado Geral de Banco de Dados', 'Simulado integrador preparatorio reutilizando questoes-chave das provas anteriores e casos praticos de aplicacao.', 'Banco de Dados I', '2026-10-28', '14:00:00', '16:30:00'),
+    (5, 'Prova 1 - Estruturas de Dados', 'Avaliacao teorico-pratica sobre complexidade assintotica, pilhas, tabelas hash, BST e indices em Arvore B+.', 'Estruturas de Dados', '2026-11-05', '19:15:00', '21:15:00'),
+    (6, 'Quiz - Arquitetura em Camadas e JDBC', 'Avaliacao sobre separacao de responsabilidades MVC/DAO, PreparedStatement e controle transacional com JDBC.', 'Engenharia de Software', '2026-11-18', '20:45:00', '22:30:00');
 
 INSERT INTO Elabora (ID, codigo_avaliacao) VALUES
     (1, 1),

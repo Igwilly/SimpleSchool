@@ -7,7 +7,11 @@ CREATE TABLE Avaliacao(
 	codigo INT PRIMARY KEY,
 	titulo VARCHAR(50),
 	descricao TEXT,
-	materia VARCHAR(50)
+	materia VARCHAR(50),
+	data DATE NOT NULL,
+	hora_inicio TIME NOT NULL,
+	hora_fim TIME NOT NULL,
+	CHECK(hora_fim>hora_inicio)
 );
 
 CREATE TABLE Turma(
@@ -44,7 +48,8 @@ CREATE TABLE Professor(
 );
 
 CREATE TABLE Questao_objetiva(
-	codigo INT PRIMARY KEY REFERENCES Questao(codigo)
+	codigo INT PRIMARY KEY REFERENCES Questao(codigo),
+	imagem TEXT
 );
 
 CREATE TABLE Questao_dissertativa(
@@ -58,13 +63,13 @@ CREATE TABLE Soluciona_avaliacao(
 	data DATE NOT NULL,
 	hora_inicio TIME NOT NULL,
 	hora_fim TIME NOT NULL,
-	PRIMARY KEY(ID_aluno, codigo_avaliacao, data) CHECK(hora_fim>hora_inicio)
+	PRIMARY KEY(ID_aluno, codigo_avaliacao, data), CHECK(hora_fim>hora_inicio)
 );
 
 CREATE TABLE Item_avaliacao(
 	codigo_avaliacao INT NOT NULL REFERENCES Avaliacao(codigo),
 	codigo_questao INT NOT NULL REFERENCES Questao(codigo),
-	valor NUMERIC(5, 2) NOT NULL CHECK(valor>0),
+	valor NUMERIC(5, 2) NOT NULL CHECK(valor>=0 AND valor<=100),
 	PRIMARY KEY(codigo_avaliacao, codigo_questao)
 );
 
@@ -72,7 +77,7 @@ CREATE TABLE Resposta(
 	ID_aluno INT NOT NULL REFERENCES Aluno(ID),
 	codigo_avaliacao INT NOT NULL REFERENCES Avaliacao(codigo),
 	codigo_questao INT NOT NULL REFERENCES Questao(codigo),
-	nota NUMERIC(5, 2) NOT NULL CHECK(nota>=0),
+	nota NUMERIC(5, 2) NOT NULL CHECK(nota>=0 AND nota<=100),
 	PRIMARY KEY(ID_aluno,codigo_avaliacao, codigo_questao)
 );
 

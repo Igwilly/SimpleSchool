@@ -10,7 +10,7 @@ dist/
 .vscode/
 **/.vscode/
 *.log
-*.pdf
+Projeto*.pdf
 .env
 .DS_Store
 Thumbs.db
